@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тесты AlarmClock</title>
+
+  <!-- Jasmine CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jasmine-core@latest/lib/jasmine-core/jasmine.css">
+</head>
+<body>
+  <h1>Результаты тестов Jasmine</h1>
+
+  <!-- Jasmine JS -->
+  <script src="https://cdn.jsdelivr.net/npm/jasmine-core@latest/lib/jasmine-core/jasmine.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jasmine-core@latest/lib/jasmine-core/jasmine-html.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jasmine-core@latest/lib/jasmine-core/boot0.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jasmine-core@latest/lib/jasmine-core/boot1.js"></script>
+
+  
+  <script src="task.js"></script>
+
+  <!-- Файл с тестами -->
+  <script>
+    describe("AlarmClock", function() {
+      let clock;
+
+      beforeEach(function() {
+        clock = new AlarmClock();
+      });
+
+      it("должен добавлять будильник", function() {
+        const callback = jasmine.createSpy("callback");
+        clock.addClock("12:00", callback);
+        expect(clock.alarmCollection.length).toBe(1);
+        expect(clock.alarmCollection[0].time).toBe("12:00");
+      });
+
+      it("должен выбрасывать ошибку, если аргументы отсутствуют", function() {
+        expect(() => clock.addClock()).toThrowError("Отсутствуют обязательные аргументы");
+      });
+
+      it("должен удалять будильник по времени", function() {
+        const callback = () => {};
+        clock.addClock("07:30", callback);
+        clock.removeClock("07:30");
+        expect(clock.alarmCollection.length).toBe(0);
+      });
+
+      it("должен сбрасывать все canCall", function() {
+        const callback = () => {};
+        clock.addClock("07:30", callback);
+        clock.alarmCollection[0].canCall = false;
+        clock.resetAllCalls();
+        expect(clock.alarmCollection[0].canCall).toBe(true);
+      });
+
+      it("должен очищать все будильники", function() {
+        const callback = () => {};
+        clock.addClock("07:30", callback);
+        clock.clearAlarms();
+        expect(clock.alarmCollection.length).toBe(0);
+        expect(clock.intervalId).toBeNull();
+      });
+    });
+  </script>
+</body>
+</html>
